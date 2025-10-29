@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>www.baytonia.com</title>
+  <style>
+    :root {
+      --primary: #000000;
+      --success: #198754;
+      --danger: #dc3545;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --border: #dee2e6;
+    }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--bg);
+      color: #333;
+      margin: 0;
+      padding-bottom: 60px;
+    }
+    header {
+      background: #fff;
+      border-bottom: 3px solid var(--primary);
+      text-align: center;
+      padding: 20px 0;
+    }
+
+
+header img.logo {
+  width: 150px;          /* smaller logo size */
+  height: auto;
+  position: absolute;   /* makes it stay at a fixed place inside header */
+  top: 10px;            /* small gap from the top */
+  right: 20px;          /* aligns logo to the right edge */
+}
+
+
+    header h1 { margin: 0; color: var(--primary); }
+    .toolbar { text-align: center; margin: 15px 0; }
+    button {
+      border: none; padding: 10px 18px; border-radius: 8px;
+      font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.3s; margin: 3px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #002b59; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .container {
+      max-width: 1100px; margin: 30px auto; background: var(--card);
+      padding: 20px 25px; border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 5px;
+      margin-top: 0;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 20px; }
+    .col { flex: 1 1 220px; }
+    label { font-weight: 600; display: block; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); }
+    .quote-info {
+      background: #f9fafb; padding: 12px; border-radius: 10px;
+      margin-bottom: 16px; border: 1px solid var(--border);
+    }
+    .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .section-head h3 { margin:0; color:#222; font-size:18px; }
+    .muted { color:#666; font-size:12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+    th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: center; font-size: 14px; }
+    th { background: var(--primary); color: #fff; }
+    tr:nth-child(even) { background: #f8f9fa; }
+    tfoot td { font-weight: 700; background: #e9f7ef; }
+    .totals-row td { background:#eef5ff; font-weight:700; }
+    .project-summary {
+      background: #fff; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:15px;
+    }
+    .project-summary .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:10px; }
+    .project-summary .item { background:#f7f9fc; border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
+    .project-summary .item b { display:block; margin-bottom:4px; color:#222; }
+    @media print {
+      button, .toolbar { display: none; }
+      body { background: #fff; }
+      .container { box-shadow: none; border: none; }
+      .quote-info { border:1px solid #000; }
+      .project-info { display: none; }
+    }
+    @media print { .no-print { display: none !important; } }
+
+@media print {
+  header img.logo {
+    width: 80px;    /* even smaller when printing */
+    height: auto;
+    position: absolute;
+    top:  15px;
+    right:  20px;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+
+<header>
+        <img src="logo_baytonia.png" alt="Baytonia Logo" class="logo">
+        <h1>B2B Project Quotation</h1>
+
+</header>
+
+
+  <div class="toolbar">
+    <button class="btn-primary" id="addItem">+ Add Work Type</button>
+    <button class="btn-primary" id="calcAll">Calculate All</button>
+    <button class="btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+
+  <div class="container">
+    <h2 class="no-print">Project Information</h2>
+    <div class="quote-info project-info">
+      <div class="row">
+        <div class="col">
+          <label>Project Name</label>
+          <input id="projectName" placeholder="Enter project name" />
+        </div>
+        <div class="col">
+          <label>Client Name</label>
+          <input id="clientName" placeholder="Enter client name" />
+        </div>
+        <div class="col">
+          <label>Prepared By</label>
+          <input id="preparedBy" placeholder="Your name" />
+        </div>
+        <div class="col">
+          <label>Date</label>
+          <input type="date" id="quoteDate" />
+        </div>
+      </div>
+    </div>
+
+    <div class="no-print">
+      <h2>Add Work Items</h2>
+      <div id="items"></div>
+    </div>
+
+    <h2>Quotation</h2>
+    <div id="projectSummary" class="project-summary" style="display:none;"></div>
+
+    <table id="quotationTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Category</th>
+          <th>Subtype / Details</th>
+          <th>Qty / Area</th>
+          <th>Unit</th>
+          <th>Min Total</th>
+          <th>Avg Total</th>
+          <th>Min (VAT)</th>
+          <th>Avg (VAT)</th>
+        </tr>
+      </thead>
+      <tbody id="quoteBody"></tbody>
+      <tfoot id="quoteFoot"></tfoot>
+    </table>
+  </div>
+
+  <template id="itemTemplate">
+    <div class="quote-info" data-item>
+      <div class="section-head">
+        <h3>Work Item</h3>
+        <button class="btn-danger" data-remove>Remove</button>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Work Type</label>
+          <select data-field="workType">
+            <option value="">Select...</option>
+            <option value="Kitchens">Kitchens</option>
+            <option value="Wardrobes">Wardrobes</option>
+            <option value="Nightstand">Nightstand</option>
+            <option value="Accessories">Bathroom Accessories</option>
+            <option value="Lighting">Lighting</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Gypsum">Gypsum</option>
+            <option value="Wall Panels">Wall Cladding</option>
+            <option value="Shelves">Shelves</option>
+            <option value="Wallpaper">Wallpaper</option>
+            <option value="Paint">Paint</option>
+            <option value="Mirrors">Mirrors</option>
+          </select>
+        </div>
+
+        <!-- Dynamic fields area -->
+        <div class="col" data-dyn></div>
+        <div class="col" data-dyn2></div>
+        <div class="col" data-dyn3></div>
+        <div class="col" data-dyn4></div>
+      </div>
+
+      <!-- Common fields (used when needed) -->
+      <div class="row" data-common>
+        <div class="col" data-length>
+          <label>Length (m)</label>
+          <input type="number" data-field="length" step="0.01" min="0">
+        </div>
+        <div class="col" data-height>
+          <label>Height (m)</label>
+          <input type="number" data-field="height" step="0.01" min="0">
+        </div>
+        <div class="col" data-qty>
+          <label>Quantity</label>
+          <input type="number" data-field="quantity" step="1" min="1" value="1">
+        </div>
+      </div>
+    </div>
+  </template>
+ 
+
+
+  <script>
+    const VAT = 0.15;
+
+    // ====== RATE BOOK (updated to your table) ======
+    const RATES = {
+      Kitchens: {
+        units: "Linear meter",
+        map: {
+          "Chipboard|Ceiling": { min:1250, avg:1340 },
+          "MDF|Ceiling":       { min:900, avg:1120 },
+          "Chipboard|Standard":{ min: 833, avg: 893 },
+          "MDF|Standard":      { min: 600, avg: 747 },
+        },
+	marble: { min: 250, avg: 415 } // ✅ Added
+      },
+      Wardrobes: {
+        units: "Linear meter",
+        map: {
+          "Chipboard|Ceiling": { min:1300, avg:1480 },
+          "MDF|Ceiling":       { min:1020, avg:1204 },
+          "Chipboard|Standard":{ min: 867, avg: 987 },
+          "MDF|Standard":      { min: 680, avg: 803 },
+        },
+        // Glass (kept as m² add-on matching your existing UI)
+        glass: { unit:"m²", min:100, avg:158 }
+      },
+      Nightstand: {
+        units: "Piece",
+        map: {
+          "Chipboard": { min:160, avg:244 },
+          "MDF":       { min: 60, avg:124 },
+        }
+      },
+      Accessories: { units: "Room", yes: { min:200, avg:430 } },
+      Lighting: {
+        types: {
+          "Complex":      { unit:"Piece", min:150, avg:300 },
+          "Simple":       { unit:"Piece", min: 50, avg: 89 },
+          "Installation": { unit:"m²",   min: 45, avg: 48 }
+        }
+      },
+      Plumbing: {
+        units: "Room",
+        // Keep your options (Kitchen / Washing room / Both) but update rates to table (per room).
+        oneRoom: { min:200, avg:590 },
+        both:    { min:400, avg:1180 } // simple double
+      },
+      Gypsum:  { unit:"m²", rate:{ min:50,  avg:117  } }, // updated
+      Shelves: {
+        unit:"m²",
+        map: {
+          "Chipboard": { min:250, avg:352 },
+          "MDF":       { min:150, avg:258 },
+        }
+      },
+      "Wall Panels": {
+        unit:"m²",
+        map: {
+          "Chipboard": { min:250, avg:320 },
+          "MDF":       { min:150, avg:210 },
+          "Foam":      { min: 20, avg: 33 }, // updated
+        }
+      },
+      Wallpaper: { unit:"m²", rate:{ min:27,  avg:68  } }, // updated
+      Paint:     { unit:"m²", rate:{ min:10,  avg:21  } }, // updated
+      Mirrors:   { unit:"m²", rate:{ min:58,  avg:272 } }, // updated
+
+      // Finishing add-ons (per linear meter of LENGTH only)
+      Finishing: {
+        Economy: 0,
+        PremiumStandard: 200,
+        PremiumCeiling: 300
+      }
+    };
+
+    const itemsEl = document.getElementById("items");
+    const tmpl = document.getElementById("itemTemplate");
+    const tbody = document.getElementById("quoteBody");
+    const tfoot = document.getElementById("quoteFoot");
+    const projSummary = document.getElementById("projectSummary");
+
+    const currency = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" SAR";
+    const show = (el, on=true) => { el.style.display = on ? "" : "none"; };
+
+    function addItem(){
+      const node = tmpl.content.cloneNode(true);
+      const card = node.querySelector("[data-item]");
+      const typeSel   = card.querySelector('[data-field="workType"]');
+      const lenWrap   = card.querySelector('[data-length]');
+      const heightWrap= card.querySelector('[data-height]');
+      const qtyWrap   = card.querySelector('[data-qty]');
+      const dyn  = card.querySelector('[data-dyn]');
+      const dyn2 = card.querySelector('[data-dyn2]');
+      const dyn3 = card.querySelector('[data-dyn3]');
+      const dyn4 = card.querySelector('[data-dyn4]');
+
+      const makeSelect = (labelTxt, options, dataField) => {
+        const wrap = document.createElement('div'); wrap.className = 'col';
+        const label = document.createElement('label'); label.textContent = labelTxt;
+        const sel = document.createElement('select'); sel.setAttribute('data-field', dataField);
+        sel.innerHTML = `<option value="">Select...</option>` + options.map(o=>`<option value="${o}">${o}</option>`).join('');
+        wrap.appendChild(label); wrap.appendChild(sel); return wrap;
+      };
+      const makeInput = (labelTxt, df, step="0.01", min="0", placeholder="")=>{
+        const wrap = document.createElement('div'); wrap.className='col';
+        const label = document.createElement('label'); label.textContent=labelTxt;
+        const input = document.createElement('input');
+        input.type = "number"; input.step = step; input.min = min; input.placeholder = placeholder;
+        input.setAttribute('data-field', df);
+        wrap.appendChild(label); wrap.appendChild(input); return wrap;
+      };
+      const makeYesNo = (labelTxt, df)=>{
+        const wrap = document.createElement('div'); wrap.className='col';
+        const label = document.createElement('label'); label.textContent=labelTxt;
+        const sel = document.createElement('select'); sel.setAttribute('data-field', df);
+        sel.innerHTML = `<option value="No">No</option><option value="Yes">Yes</option>`;
+        wrap.appendChild(label); wrap.appendChild(sel); return wrap;
+      };
+
+      function refreshFields(){
+        [dyn,dyn2,dyn3,dyn4].forEach(c=>c.innerHTML="");
+        const type = typeSel.value;
+
+        // defaults
+        show(lenWrap, true);
+        show(heightWrap, true);
+        show(qtyWrap, true);
+
+        // Reset common height/depth label
+        const hLabel = heightWrap.querySelector('label');
+        if (hLabel) hLabel.textContent = "Height (m)";
+
+        if(!type) return;
+
+        if(type==="Kitchens"){
+          const mat = makeSelect("Material", ["Chipboard","MDF"], "material");
+          const heightSel = makeSelect("Height", ["Ceiling","Standard"], "height");
+          const finish = makeSelect("Finishing", ["Economy","Premium"], "finishing");
+          dyn.appendChild(mat); dyn2.appendChild(heightSel); dyn3.appendChild(finish);
+          show(heightWrap, false); // we choose height from dropdown, not numeric
+        }
+        else if(type==="Wardrobes"){
+          const mat = makeSelect("Material", ["Chipboard","MDF"], "material");
+          const heightSel = makeSelect("Height Type", ["Ceiling","Standard"], "height");
+          const glassYN = makeYesNo("Door Glass?", "glassDoor");
+          const glassArea = makeInput("Glass Area (m²)", "glassArea", "0.01", "0", "0.00");
+          const finish = makeSelect("Finishing", ["Economy","Premium"], "finishing");
+          dyn.appendChild(mat); dyn2.appendChild(heightSel); dyn3.appendChild(glassYN); dyn4.appendChild(glassArea);
+          // add finishing under wardrobes; still no numeric height field
+          dyn4.appendChild(finish);
+          show(heightWrap, false);
+        }
+        else if(type==="Nightstand"){
+          const mat = makeSelect("Material", ["Chipboard","MDF"], "material");
+          dyn.appendChild(mat);
+          show(lenWrap, false); show(heightWrap, false); show(qtyWrap, true);
+        }
+
+        else if(type==="Accessories"){
+          const yesno = makeYesNo("Bathroom Accessories Exist?", "accYesNo");
+          dyn.appendChild(yesno);
+          show(lenWrap, false); show(heightWrap, false); show(qtyWrap, true);
+        }
+
+
+
+     else if(type==="Lighting"){
+  const kind = makeSelect("Lighting Type", ["Complex installation",
+  "Simple installation",
+  "Electrical cabling"
+], "lightType");
+  dyn.appendChild(kind);
+
+  // Show fields conditionally
+  const updateLightingFields = () => {
+    const lt = kind.querySelector('select').value;
+    if (lt === "Installation") {
+      // For Installation, show length & height to calculate area
+      show(lenWrap, true);
+      show(heightWrap, true);
+      show(qtyWrap, true);
+    } else {
+      // For Simple / Complex, only quantity matters
+      show(lenWrap, false);
+      show(heightWrap, false);
+      show(qtyWrap, true);
+    }
+  };
+
+  kind.querySelector('select').addEventListener("change", updateLightingFields);
+  updateLightingFields();
+}
+
+
+
+        else if(type==="Plumbing"){
+          const p = makeSelect("Plumbing Scope", ["Kitchen","Washing room","Both"], "plumbScope");
+          dyn.appendChild(p);
+          show(lenWrap, false); show(heightWrap, false); show(qtyWrap, true);
+        }
+        else if(type==="Gypsum"){
+          const side = makeSelect("Subtype", ["One side","Two sides"], "gypsumSide");
+          dyn.appendChild(side);
+          show(lenWrap, true); show(heightWrap, true); show(qtyWrap, true);
+        }
+        else if(type==="Shelves"){
+          const mat = makeSelect("Material", ["Chipboard","MDF"], "material");
+          dyn.appendChild(mat);
+          // Use Depth label but keep same field name
+          if (hLabel) hLabel.textContent = "Depth (m)";
+          show(lenWrap, true); show(heightWrap, true); show(qtyWrap, true);
+        }
+        else if(type==="Wall Panels"){
+          const mat = makeSelect("Material", ["Chipboard","MDF","Foam"], "material");
+          dyn.appendChild(mat);
+          show(lenWrap, true); show(heightWrap, true); show(qtyWrap, true);
+        }
+        else if(type==="Wallpaper" || type==="Paint" || type==="Mirrors"){
+          show(lenWrap, true); show(heightWrap, true); show(qtyWrap, true);
+        }
+      }
+
+      typeSel.addEventListener("change", refreshFields);
+      card.querySelector("[data-remove]").addEventListener("click",()=>card.remove());
+      itemsEl.appendChild(card);
+    }
+
+    function calcAll(){
+      const rows=[]; let idx=0;
+
+      const pName = document.getElementById("projectName").value || "-";
+      const cName = document.getElementById("clientName").value || "-";
+      const pBy   = document.getElementById("preparedBy").value || "-";
+      const pDate = document.getElementById("quoteDate").value || "-";
+      document.getElementById("projectSummary").innerHTML =
+        `<div class="grid">
+          <div class="item"><b>Project:</b> ${pName}</div>
+          <div class="item"><b>Client:</b> ${cName}</div>
+          <div class="item"><b>Prepared By:</b> ${pBy}</div>
+          <div class="item"><b>Date:</b> ${pDate}</div>
+        </div>`;
+      document.getElementById("projectSummary").style.display = "";
+
+      for(const card of itemsEl.querySelectorAll("[data-item]")){
+        const type = card.querySelector('[data-field="workType"]').value;
+        if(!type) continue;
+
+        const length = parseFloat(card.querySelector('[data-field="length"]')?.value || "0") || 0;
+        const heightNum = parseFloat(card.querySelector('[data-field="height"]')?.value  || "0") || 0; // used as "Depth" for shelves
+        const qty    = parseFloat(card.querySelector('[data-field="quantity"]')?.value || "1") || 1;
+
+        const pushRow = (cat, sub, qtyArea, unit, min, avg) => {
+          rows.push({ idx: ++idx, type:cat, sub, qty: qtyArea, unit, min, avg, minVAT: min*(1+VAT), avgVAT: avg*(1+VAT) });
+        };
+
+if(type==="Kitchens"){
+  const mat = card.querySelector('[data-field="material"]')?.value;
+  const height = card.querySelector('[data-field="height"]')?.value;
+  const finishing = card.querySelector('[data-field="finishing"]')?.value || "Economy";
+  if(!mat || !height) continue;
+
+  const key = `${mat}|${height}`;
+  const rate = RATES.Kitchens.map[key];
+  const marble = RATES.Kitchens.marble; // ✅ Add marble rate reference
+  const unit = "Linear meter";
+  const linearM = length * 1;
+  const areaQty = Math.max(0, linearM) * qty;
+
+  let min = rate.min * areaQty;
+  let avg = rate.avg * areaQty;
+
+  // ✅ Always add Artificial Marble cost (mandatory)
+  min += marble.min * linearM;
+  avg += marble.avg * linearM;
+
+  // ✅ Finishing cost logic
+  if (finishing === "Premium") {
+    const finishingAdd = height === "Standard" ? 200 : height === "Ceiling" ? 300 : 0;
+    min += finishingAdd * areaQty;
+    avg += finishingAdd * areaQty;
+  }
+
+  const sub = `${mat} – ${height} Height${finishing==="Premium"?" (Premium Finishing)":" (Economy Finishing)"} + Artificial Marble`;
+  pushRow("Kitchens", sub, areaQty || qty, unit, min, avg);
+}
+
+
+        else if(type==="Wardrobes"){
+          const mat = card.querySelector('[data-field="material"]')?.value;
+          const heightSel = card.querySelector('[data-field="height"]')?.value; // Ceiling / Standard
+          const finishing = card.querySelector('[data-field="finishing"]')?.value || "Economy";
+          const glassDoor = (card.querySelector('[data-field="glassDoor"]')?.value || "No")==="Yes";
+          const glassArea = parseFloat(card.querySelector('[data-field="glassArea"]')?.value || "0") || 0;
+          if(!mat || !heightSel) continue;
+
+          const key = `${mat}|${heightSel}`;
+          const rate = RATES.Wardrobes.map[key];
+          if(!rate) continue;
+
+          const unit = "Linear meter";
+          const linearM = Math.max(0, length) * Math.max(1, qty);
+          let min = rate.min * linearM;
+          let avg = rate.avg * linearM;
+
+          // Finishing per linear meter (length only)
+          if (finishing === "Premium") {
+            const addPerLm = (heightSel === "Ceiling") ? RATES.Finishing.PremiumCeiling : RATES.Finishing.PremiumStandard;
+            min += addPerLm * Math.max(0, length) * Math.max(1, qty);
+            avg += addPerLm * Math.max(0, length) * Math.max(1, qty);
+          }
+
+          // Glass add-on by area (kept as m² from your existing UI)
+          if(glassDoor && glassArea>0){
+            const gRate = RATES.Wardrobes.glass;
+            min += gRate.min * glassArea;
+            avg += gRate.avg * glassArea;
+          }
+
+          const sub = `${mat} – ${heightSel} Height${glassDoor && glassArea>0 ? ` + Glass (${glassArea.toFixed(2)} m²)` : ""}${finishing==="Premium"?" (Premium Finishing)":" (Economy Finishing)"}`;
+          pushRow("Wardrobes", sub, linearM, unit, min, avg);
+        }
+        else if(type==="Nightstand"){
+          const mat = card.querySelector('[data-field="material"]')?.value;
+          if(!mat) continue;
+          const rate = RATES.Nightstand.map[mat];
+          const unit = "Piece";
+          const q = Math.max(1, qty);
+          const min = rate.min * q, avg = rate.avg * q;
+          pushRow("Nightstand", `${mat}`, q, unit, min, avg);
+        }
+
+else if(type==="Accessories"){
+  const yesNo = (card.querySelector('[data-field="accYesNo"]')?.value || "No") === "Yes";
+  const q = Math.max(1, parseFloat(card.querySelector('[data-field="quantity"]')?.value || "1"));
+  
+  if (yesNo) {
+    const unit = "Room";
+    const min = RATES.Accessories.yes.min * q;
+    const avg = RATES.Accessories.yes.avg * q;
+    pushRow("Bathroom Accessories", `Exists (${q} Room${q>1?"s":""})`, q, unit, min, avg);
+  }
+}       
+
+else if(type==="Lighting"){
+  const lt = card.querySelector('[data-field="lightType"]')?.value;
+  if(!lt) continue;
+  const conf = RATES.Lighting.types[lt];
+  if(lt==="Installation"){
+    const area = Math.max(0, length * heightNum) * Math.max(1, qty);
+    const min = conf.min * area, avg = conf.avg * area;
+    pushRow("Lighting", `Installation (${area.toFixed(2)} m²)`, area, conf.unit, min, avg);
+  } else {
+    const q = Math.max(1, qty);
+    const min = conf.min * q, avg = conf.avg * q;
+    pushRow("Lighting", lt, q, conf.unit, min, avg);
+  }
+}
+
+
+
+        else if(type==="Plumbing"){
+          const scope = card.querySelector('[data-field="plumbScope"]')?.value;
+          if(!scope) continue;
+          let min=0, avg=0, qtyDisp=1, unit="Room", sub=scope;
+          if(scope==="Both"){ ({min,avg} = RATES.Plumbing.both); }
+          else { ({min,avg} = RATES.Plumbing.oneRoom); }
+          pushRow("Plumbing", sub, qtyDisp, unit, min, avg);
+        }
+        else if(type==="Gypsum"){
+          const side = card.querySelector('[data-field="gypsumSide"]')?.value || "One side";
+          const baseArea = Math.max(0, length*heightNum) * Math.max(1, qty);
+          const factor = (side==="Two sides") ? 2 : 1;
+          const area = baseArea * factor;
+          const rate = RATES.Gypsum.rate;
+          const min = rate.min * area, avg = rate.avg * area;
+          pushRow("Gypsum", side, area, RATES.Gypsum.unit, min, avg);
+        }
+        else if(type==="Shelves"){
+          const mat = card.querySelector('[data-field="material"]')?.value;
+          if(!mat) continue;
+          const rate = RATES.Shelves.map[mat];
+          const area = Math.max(0, length*heightNum) * Math.max(1, qty); // heightNum is Depth here
+          const min = rate.min * area, avg = rate.avg * area;
+          pushRow("Shelves", mat, area, RATES.Shelves.unit, min, avg);
+        }
+        else if(type==="Wall Panels"){
+          const mat = card.querySelector('[data-field="material"]')?.value;
+          if(!mat) continue;
+          const rate = RATES["Wall Panels"].map[mat];
+          const area = Math.max(0, length*heightNum) * Math.max(1, qty);
+          const min = rate.min * area, avg = rate.avg * area;
+          pushRow("Wall Panels", mat, area, RATES["Wall Panels"].unit, min, avg);
+        }
+        else if(type==="Wallpaper"){
+          const area = Math.max(0, length*heightNum) * Math.max(1, qty);
+          const {min,avg} = RATES.Wallpaper.rate;
+          pushRow("Wallpaper", "-", area, RATES.Wallpaper.unit, min*area, avg*area);
+        }
+        else if(type==="Paint"){
+          const area = Math.max(0, length*heightNum) * Math.max(1, qty);
+          const {min,avg} = RATES.Paint.rate;
+          // Note: table note “if more than 50 m², 10 SAR” not further specified,
+          // we honor the exact min/avg rates provided.
+          pushRow("Paint", "-", area, RATES.Paint.unit, min*area, avg*area);
+        }
+        else if(type==="Mirrors"){
+          const area = Math.max(0, length*heightNum) * Math.max(1, qty);
+          const {min,avg} = RATES.Mirrors.rate;
+          pushRow("Mirrors", "-", area, RATES.Mirrors.unit, min*area, avg*area);
+        }
+      }
+
+      tbody.innerHTML="";
+      let overallMin=0, overallAvg=0;
+
+      const cats = [...new Set(rows.map(r=>r.type))];
+      cats.forEach(cat=>{
+        let cMin=0,cAvg=0;
+        rows.filter(r=>r.type===cat).forEach(r=>{
+          cMin+=r.min; cAvg+=r.avg;
+          tbody.insertAdjacentHTML('beforeend', `
+            <tr>
+              <td>${r.idx}</td>
+              <td>${r.type}</td>
+              <td>${r.sub}</td>
+              <td>${(r.qty||0).toFixed(2)}</td>
+              <td>${r.unit}</td>
+              <td>${currency(r.min)}</td>
+              <td>${currency(r.avg)}</td>
+              <td>${currency(r.minVAT)}</td>
+              <td>${currency(r.avgVAT)}</td>
+            </tr>
+          `);
+        });
+        const cMinVAT=cMin*(1+VAT), cAvgVAT=cAvg*(1+VAT);
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr class="totals-row">
+            <td colspan="5"><b>${cat} Subtotal</b></td>
+            <td><b>${currency(cMin)}</b></td>
+            <td><b>${currency(cAvg)}</b></td>
+            <td><b>${currency(cMinVAT)}</b></td>
+            <td><b>${currency(cAvgVAT)}</b></td>
+          </tr>
+        `);
+        overallMin+=cMin; overallAvg+=cAvg;
+      });
+
+      const oMinVAT=overallMin*(1+VAT), oAvgVAT=overallAvg*(1+VAT);
+      tfoot.innerHTML = `
+        <tr>
+          <td colspan="5"><b>Overall Total</b></td>
+          <td><b>${currency(overallMin)}</b></td>
+          <td><b>${currency(overallAvg)}</b></td>
+          <td><b>${currency(oMinVAT)}</b></td>
+          <td><b>${currency(oAvgVAT)}</b></td>
+        </tr>
+      `;
+      document.getElementById("quotationTable").style.display = rows.length ? "table" : "none";
+    }
+
+    document.getElementById("addItem").addEventListener("click", addItem);
+    document.getElementById("calcAll").addEventListener("click", calcAll);
+    addItem();
+  </script>
+</body>
+</html>
