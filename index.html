@@ -471,9 +471,25 @@ header img.logo {
         const heightNum = parseFloat(card.querySelector('[data-field="height"]')?.value  || "0") || 0; // used as "Depth" for shelves
         const qty    = parseFloat(card.querySelector('[data-field="quantity"]')?.value || "1") || 1;
 
-        const pushRow = (cat, sub, qtyArea, unit, min, avg) => {
-          rows.push({ idx: ++idx, type:cat, sub, qty: qtyArea, unit, min, avg, minVAT: min*(1+VAT), avgVAT: avg*(1+VAT) });
-        };
+       const pushRow = (cat, sub, qtyArea, unit, min, avg, rawQty = 1) => {
+  let qtyDisplay = rawQty; // show user input quantity
+  // if area > 0, show as "qty / area"
+  if (qtyArea && qtyArea !== rawQty) {
+    qtyDisplay = `${rawQty} / ${qtyArea.toFixed(2)}`;
+  }
+  rows.push({
+    idx: ++idx,
+    type: cat,
+    sub,
+    qtyDisplay,
+    unit,
+    min,
+    avg,
+    minVAT: min * (1 + VAT),
+    avgVAT: avg * (1 + VAT)
+  });
+};
+
 
 if(type==="Kitchens"){
   const mat = card.querySelector('[data-field="material"]')?.value;
@@ -492,8 +508,8 @@ if(type==="Kitchens"){
   let avg = rate.avg * areaQty;
 
   // ✅ Always add Artificial Marble cost (mandatory)
-  min += marble.min * linearM;
-  avg += marble.avg * linearM;
+  min += marble.min * linearM * qty;
+  avg += marble.avg * linearM * qty;
 
   // ✅ Finishing cost logic
   if (finishing === "Premium") {
@@ -503,7 +519,7 @@ if(type==="Kitchens"){
   }
 
   const sub = `${mat} – ${height} Height${finishing==="Premium"?" (Premium Finishing)":" (Economy Finishing)"} + Artificial Marble`;
-  pushRow("Kitchens", sub, areaQty || qty, unit, min, avg);
+  pushRow("Kitchens", sub, areaQty || qty, unit, min, avg, qty);
 }
 
 
@@ -539,7 +555,7 @@ if(type==="Kitchens"){
           }
 
           const sub = `${mat} – ${heightSel} Height${glassDoor && glassArea>0 ? ` + Glass (${glassArea.toFixed(2)} m²)` : ""}${finishing==="Premium"?" (Premium Finishing)":" (Economy Finishing)"}`;
-          pushRow("Wardrobes", sub, linearM, unit, min, avg);
+          pushRow("Wardrobes", sub, linearM, unit, min, avg, qty);
         }
         else if(type==="Nightstand"){
           const mat = card.querySelector('[data-field="material"]')?.value;
@@ -548,7 +564,7 @@ if(type==="Kitchens"){
           const unit = "Piece";
           const q = Math.max(1, qty);
           const min = rate.min * q, avg = rate.avg * q;
-          pushRow("Nightstand", `${mat}`, q, unit, min, avg);
+          pushRow("Nightstand", `${mat}`, q, unit, min, avg, q);
         }
 
 else if(type==="Accessories"){
@@ -559,7 +575,7 @@ else if(type==="Accessories"){
     const unit = "Room";
     const min = RATES.Accessories.yes.min * q;
     const avg = RATES.Accessories.yes.avg * q;
-    pushRow("Bathroom Accessories", `Exists (${q} Room${q>1?"s":""})`, q, unit, min, avg);
+    pushRow("Bathroom Accessories", `Exists (${q} Room${q>1?"s":""})`, q, unit, min, avg, q);
   }
 }       
 
@@ -570,11 +586,11 @@ else if(type==="Lighting"){
   if(lt==="Installation"){
     const area = Math.max(0, length * heightNum) * Math.max(1, qty);
     const min = conf.min * area, avg = conf.avg * area;
-    pushRow("Lighting", `Installation (${area.toFixed(2)} m²)`, area, conf.unit, min, avg);
+    pushRow("Lighting", `Installation (${area.toFixed(2)} m²)`, area, conf.unit, min, avg, qty);
   } else {
     const q = Math.max(1, qty);
     const min = conf.min * q, avg = conf.avg * q;
-    pushRow("Lighting", lt, q, conf.unit, min, avg);
+    pushRow("Lighting", lt, q, conf.unit, min, avg, q);
   }
 }
 
@@ -586,7 +602,7 @@ else if(type==="Lighting"){
           let min=0, avg=0, qtyDisp=1, unit="Room", sub=scope;
           if(scope==="Both"){ ({min,avg} = RATES.Plumbing.both); }
           else { ({min,avg} = RATES.Plumbing.oneRoom); }
-          pushRow("Plumbing", sub, qtyDisp, unit, min, avg);
+          pushRow("Plumbing", sub, qtyDisp, unit, min, avg, qtyDisp);
         }
         else if(type==="Gypsum"){
           const side = card.querySelector('[data-field="gypsumSide"]')?.value || "One side";
@@ -595,7 +611,7 @@ else if(type==="Lighting"){
           const area = baseArea * factor;
           const rate = RATES.Gypsum.rate;
           const min = rate.min * area, avg = rate.avg * area;
-          pushRow("Gypsum", side, area, RATES.Gypsum.unit, min, avg);
+          pushRow("Gypsum", side, area, RATES.Gypsum.unit, min, avg, qty);
         }
         else if(type==="Shelves"){
           const mat = card.querySelector('[data-field="material"]')?.value;
@@ -603,7 +619,7 @@ else if(type==="Lighting"){
           const rate = RATES.Shelves.map[mat];
           const area = Math.max(0, length*heightNum) * Math.max(1, qty); // heightNum is Depth here
           const min = rate.min * area, avg = rate.avg * area;
-          pushRow("Shelves", mat, area, RATES.Shelves.unit, min, avg);
+          pushRow("Shelves", mat, area, RATES.Shelves.unit, min, avg, qty);
         }
         else if(type==="Wall Panels"){
           const mat = card.querySelector('[data-field="material"]')?.value;
@@ -611,24 +627,24 @@ else if(type==="Lighting"){
           const rate = RATES["Wall Panels"].map[mat];
           const area = Math.max(0, length*heightNum) * Math.max(1, qty);
           const min = rate.min * area, avg = rate.avg * area;
-          pushRow("Wall Panels", mat, area, RATES["Wall Panels"].unit, min, avg);
+          pushRow("Wall Panels", mat, area, RATES["Wall Panels"].unit, min, avg, qty);
         }
         else if(type==="Wallpaper"){
           const area = Math.max(0, length*heightNum) * Math.max(1, qty);
           const {min,avg} = RATES.Wallpaper.rate;
-          pushRow("Wallpaper", "-", area, RATES.Wallpaper.unit, min*area, avg*area);
+          pushRow("Wallpaper", "-", area, RATES.Wallpaper.unit, min*area, avg*area, qty);
         }
         else if(type==="Paint"){
           const area = Math.max(0, length*heightNum) * Math.max(1, qty);
           const {min,avg} = RATES.Paint.rate;
           // Note: table note “if more than 50 m², 10 SAR” not further specified,
           // we honor the exact min/avg rates provided.
-          pushRow("Paint", "-", area, RATES.Paint.unit, min*area, avg*area);
+          pushRow("Paint", "-", area, RATES.Paint.unit, min*area, avg*area, qty);
         }
         else if(type==="Mirrors"){
           const area = Math.max(0, length*heightNum) * Math.max(1, qty);
           const {min,avg} = RATES.Mirrors.rate;
-          pushRow("Mirrors", "-", area, RATES.Mirrors.unit, min*area, avg*area);
+          pushRow("Mirrors", "-", area, RATES.Mirrors.unit, min*area, avg*area, qty);
         }
       }
 
@@ -645,7 +661,7 @@ else if(type==="Lighting"){
               <td>${r.idx}</td>
               <td>${r.type}</td>
               <td>${r.sub}</td>
-              <td>${(r.qty||0).toFixed(2)}</td>
+              <td>${r.qtyDisplay || (r.qty||0).toFixed(2)}</td>
               <td>${r.unit}</td>
               <td>${currency(r.min)}</td>
               <td>${currency(r.avg)}</td>
@@ -686,4 +702,3 @@ else if(type==="Lighting"){
   </script>
 </body>
 </html>
-
