@@ -385,19 +385,19 @@ header img.logo {
         }
 
 
-
-     else if(type==="Lighting"){
-  const kind = makeSelect("Lighting Type", ["Complex installation",
-  "Simple installation",
-  "Electrical cabling"
-], "lightType");
+else if(type==="Lighting"){
+  const kind = makeSelect("Lighting Type", [
+    "Complex installation",
+    "Simple installation",
+    "Electrical cabling"
+  ], "lightType");
   dyn.appendChild(kind);
 
   // Show fields conditionally
   const updateLightingFields = () => {
     const lt = kind.querySelector('select').value;
-    if (lt === "Installation") {
-      // For Installation, show length & height to calculate area
+    if (lt === "Electrical cabling") {
+      // ✅ For cabling, show length & height to calculate area
       show(lenWrap, true);
       show(heightWrap, true);
       show(qtyWrap, true);
@@ -579,31 +579,54 @@ else if(type==="Accessories"){
   }
 }       
 
+
+
 else if(type==="Lighting"){
-  const lt = card.querySelector('[data-field="lightType"]')?.value;
-  if(!lt) continue;
-  const conf = RATES.Lighting.types[lt];
-  if(lt==="Installation"){
+  const ltRaw = card.querySelector('[data-field="lightType"]')?.value;
+  if(!ltRaw) continue;
+
+  // Map display text → rate key
+  let ltKey;
+  if (ltRaw === "Complex installation") ltKey = "Complex";
+  else if (ltRaw === "Simple installation") ltKey = "Simple";
+  else if (ltRaw === "Electrical cabling") ltKey = "Installation";
+
+  const conf = RATES.Lighting.types[ltKey];
+  if(!conf) continue;
+
+  if(ltKey === "Installation"){
     const area = Math.max(0, length * heightNum) * Math.max(1, qty);
     const min = conf.min * area, avg = conf.avg * area;
-    pushRow("Lighting", `Installation (${area.toFixed(2)} m²)`, area, conf.unit, min, avg, qty);
+    pushRow("Lighting", `${ltRaw} (${area.toFixed(2)} m²)`, area, conf.unit, min, avg, qty);
   } else {
     const q = Math.max(1, qty);
     const min = conf.min * q, avg = conf.avg * q;
-    pushRow("Lighting", lt, q, conf.unit, min, avg, q);
+    pushRow("Lighting", ltRaw, q, conf.unit, min, avg, q);
   }
 }
 
 
 
-        else if(type==="Plumbing"){
-          const scope = card.querySelector('[data-field="plumbScope"]')?.value;
-          if(!scope) continue;
-          let min=0, avg=0, qtyDisp=1, unit="Room", sub=scope;
-          if(scope==="Both"){ ({min,avg} = RATES.Plumbing.both); }
-          else { ({min,avg} = RATES.Plumbing.oneRoom); }
-          pushRow("Plumbing", sub, qtyDisp, unit, min, avg, qtyDisp);
-        }
+
+
+
+      else if(type==="Plumbing"){
+  const scope = card.querySelector('[data-field="plumbScope"]')?.value;
+  if(!scope) continue;
+
+  const q = Math.max(1, parseFloat(card.querySelector('[data-field="quantity"]')?.value || "1"));
+  let min=0, avg=0, unit="Room", sub=scope;
+
+  if(scope==="Both"){ ({min,avg} = RATES.Plumbing.both); }
+  else { ({min,avg} = RATES.Plumbing.oneRoom); }
+
+  // ✅ multiply by quantity
+  min *= q;
+  avg *= q;
+
+  pushRow("Plumbing", `${scope} (${q} Room${q>1?"s":""})`, q, unit, min, avg, q);
+}
+
         else if(type==="Gypsum"){
           const side = card.querySelector('[data-field="gypsumSide"]')?.value || "One side";
           const baseArea = Math.max(0, length*heightNum) * Math.max(1, qty);
