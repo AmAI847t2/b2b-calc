@@ -4,106 +4,181 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>www.baytonia.com</title>
-  <style>
-    :root {
-      --primary: #000000;
-      --success: #198754;
-      --danger: #dc3545;
-      --bg: #f4f6f8;
-      --card: #ffffff;
-      --border: #dee2e6;
-    }
-    body {
-      font-family: "Poppins", sans-serif;
-      background: var(--bg);
-      color: #333;
-      margin: 0;
-      padding-bottom: 60px;
-    }
-    header {
-      background: #fff;
-      border-bottom: 3px solid var(--primary);
-      text-align: center;
-      padding: 20px 0;
-    }
 
 
-header img.logo {
-  width: 150px;          /* smaller logo size */
-  height: auto;
-  position: absolute;   /* makes it stay at a fixed place inside header */
-  top: 10px;            /* small gap from the top */
-  right: 20px;          /* aligns logo to the right edge */
+<style>
+#AmaY-tool {
+  --primary: #000000;
+  --success: #198754;
+  --danger: #dc3545;
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --border: #dee2e6;
 }
 
+#AmaY-tool body {
+  font-family: "Poppins", sans-serif;
+  background: var(--bg);
+  color: #333;
+  margin: 0;
+  padding-bottom: 60px;
+}
 
-    header h1 { margin: 0; color: var(--primary); }
-    .toolbar { text-align: center; margin: 15px 0; }
-    button {
-      border: none; padding: 10px 18px; border-radius: 8px;
-      font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.3s; margin: 3px;
-    }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: #002b59; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .container {
-      max-width: 1100px; margin: 30px auto; background: var(--card);
-      padding: 20px 25px; border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: var(--primary);
-      border-bottom: 2px solid var(--primary);
-      padding-bottom: 5px;
-      margin-top: 0;
-    }
-    .row { display: flex; flex-wrap: wrap; gap: 20px; }
-    .col { flex: 1 1 220px; }
-    label { font-weight: 600; display: block; margin-bottom: 5px; }
-    input, select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); }
-    .quote-info {
-      background: #f9fafb; padding: 12px; border-radius: 10px;
-      margin-bottom: 16px; border: 1px solid var(--border);
-    }
-    .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-    .section-head h3 { margin:0; color:#222; font-size:18px; }
-    .muted { color:#666; font-size:12px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-    th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: center; font-size: 14px; }
-    th { background: var(--primary); color: #fff; }
-    tr:nth-child(even) { background: #f8f9fa; }
-    tfoot td { font-weight: 700; background: #e9f7ef; }
-    .totals-row td { background:#eef5ff; font-weight:700; }
-    .project-summary {
-      background: #fff; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:15px;
-    }
-    .project-summary .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:10px; }
-    .project-summary .item { background:#f7f9fc; border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
-    .project-summary .item b { display:block; margin-bottom:4px; color:#222; }
-    @media print {
-      button, .toolbar { display: none; }
-      body { background: #fff; }
-      .container { box-shadow: none; border: none; }
-      .quote-info { border:1px solid #000; }
-      .project-info { display: none; }
-    }
-    @media print { .no-print { display: none !important; } }
+#AmaY-tool header {
+  background: #fff;
+  border-bottom: 3px solid var(--primary);
+  text-align: center;
+  padding: 20px 0;
+}
+
+#AmaY-tool header img.logo {
+  width: 150px;
+  height: auto;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+#AmaY-tool header h1 { margin: 0; color: var(--primary); }
+#AmaY-tool .toolbar { text-align: center; margin: 15px 0; }
+
+#AmaY-tool button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 3px;
+  background: var(--primary);
+  color: #fff;
+}
+
+#AmaY-tool button:hover {
+  background: #002b59;
+}
+
+#AmaY-tool .btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+#AmaY-tool .container {
+  max-width: 1100px;
+  margin: 30px auto;
+  background: var(--card);
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#AmaY-tool h2 {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 5px;
+  margin-top: 0;
+}
+
+#AmaY-tool .row { display: flex; flex-wrap: wrap; gap: 20px; }
+#AmaY-tool .col { flex: 1 1 220px; }
+#AmaY-tool label { font-weight: 600; display: block; margin-bottom: 5px; }
+#AmaY-tool input,
+#AmaY-tool select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+#AmaY-tool .quote-info {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+#AmaY-tool .section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#AmaY-tool .section-head h3 { margin: 0; color: #222; font-size: 18px; }
+#AmaY-tool .muted { color: #666; font-size: 12px; }
+
+#AmaY-tool table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+}
+
+#AmaY-tool th,
+#AmaY-tool td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+#AmaY-tool th { background: var(--primary); color: #fff; }
+#AmaY-tool tr:nth-child(even) { background: #f8f9fa; }
+#AmaY-tool tfoot td { font-weight: 700; background: #e9f7ef; }
+#AmaY-tool .totals-row td { background: #eef5ff; font-weight: 700; }
+
+#AmaY-tool .project-summary {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 15px;
+}
+
+#AmaY-tool .project-summary .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+#AmaY-tool .project-summary .item {
+  background: #f7f9fc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+#AmaY-tool .project-summary .item b {
+  display: block;
+  margin-bottom: 4px;
+  color: #222;
+}
 
 @media print {
-  header img.logo {
-    width: 80px;    /* even smaller when printing */
+  #AmaY-tool button,
+  #AmaY-tool .toolbar { display: none; }
+  #AmaY-tool body { background: #fff; }
+  #AmaY-tool .container { box-shadow: none; border: none; }
+  #AmaY-tool .quote-info { border: 1px solid #000; }
+  #AmaY-tool .project-info { display: none; }
+  #AmaY-tool .no-print { display: none !important; }
+  #AmaY-tool header img.logo {
+    width: 80px;
     height: auto;
     position: absolute;
-    top:  15px;
-    right:  20px;
+    top: 15px;
+    right: 20px;
   }
 }
+</style>
 
 
-  </style>
+
+
 </head>
 <body>
-
+<div id="AmaY-tool">
 <header>
         <img src="logo_baytonia.png" alt="Baytonia Logo" class="logo">
         <h1>B2B Project Quotation</h1>
@@ -190,7 +265,9 @@ header img.logo {
             <option value="Wallpaper">Wallpaper</option>
             <option value="Paint">Paint</option>
             <option value="Mirrors">Mirrors</option>
-          </select>
+<option value="Tiles">Tiles</option>          
+
+</select>
         </div>
 
         <!-- Dynamic fields area -->
@@ -221,6 +298,10 @@ header img.logo {
 
 
   <script>
+(function() {
+  'use strict';
+  const root = document.getElementById('AmaY-tool');
+  if (!root) return;
     const VAT = 0.15;
 
     // ====== RATE BOOK (updated to your table) ======
@@ -286,6 +367,7 @@ header img.logo {
       Wallpaper: { unit:"m²", rate:{ min:27,  avg:68  } }, // updated
       Paint:     { unit:"m²", rate:{ min:10,  avg:21  } }, // updated
       Mirrors:   { unit:"m²", rate:{ min:58,  avg:272 } }, // updated
+     Tiles: { unit:"m²", rate:{ min:25.6, avg:31.4 } },
 
       // Finishing add-ons (per linear meter of LENGTH only)
       Finishing: {
@@ -295,11 +377,13 @@ header img.logo {
       }
     };
 
-    const itemsEl = document.getElementById("items");
-    const tmpl = document.getElementById("itemTemplate");
-    const tbody = document.getElementById("quoteBody");
-    const tfoot = document.getElementById("quoteFoot");
-    const projSummary = document.getElementById("projectSummary");
+const $ = sel => root.querySelector(sel);
+const itemsEl = $('#items');
+const tmpl = $('#itemTemplate');
+const tbody = $('#quoteBody');
+const tfoot = $('#quoteFoot');
+const projSummary = $('#projectSummary');
+
 
     const currency = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+" SAR";
     const show = (el, on=true) => { el.style.display = on ? "" : "none"; };
@@ -397,7 +481,7 @@ else if(type==="Lighting"){
   const updateLightingFields = () => {
     const lt = kind.querySelector('select').value;
     if (lt === "Electrical cabling") {
-      // ✅ For cabling, show length & height to calculate area
+      //  For cabling, show length & height to calculate area
       show(lenWrap, true);
       show(heightWrap, true);
       show(qtyWrap, true);
@@ -440,6 +524,13 @@ else if(type==="Lighting"){
         else if(type==="Wallpaper" || type==="Paint" || type==="Mirrors"){
           show(lenWrap, true); show(heightWrap, true); show(qtyWrap, true);
         }
+ else if(type==="Tiles"){
+    const hLabel = heightWrap.querySelector('label');
+    if (hLabel) hLabel.textContent = "Width (m)";
+    show(lenWrap, true);
+    show(heightWrap, true);
+    show(qtyWrap, true);
+  }
       }
 
       typeSel.addEventListener("change", refreshFields);
@@ -507,11 +598,11 @@ if(type==="Kitchens"){
   let min = rate.min * areaQty;
   let avg = rate.avg * areaQty;
 
-  // ✅ Always add Artificial Marble cost (mandatory)
+  //  Always add Artificial Marble cost (mandatory)
   min += marble.min * linearM * qty;
   avg += marble.avg * linearM * qty;
 
-  // ✅ Finishing cost logic
+  // Finishing cost logic
   if (finishing === "Premium") {
     const finishingAdd = height === "Standard" ? 200 : height === "Ceiling" ? 300 : 0;
     min += finishingAdd * areaQty;
@@ -608,8 +699,6 @@ else if(type==="Lighting"){
 
 
 
-
-
       else if(type==="Plumbing"){
   const scope = card.querySelector('[data-field="plumbScope"]')?.value;
   if(!scope) continue;
@@ -620,7 +709,7 @@ else if(type==="Lighting"){
   if(scope==="Both"){ ({min,avg} = RATES.Plumbing.both); }
   else { ({min,avg} = RATES.Plumbing.oneRoom); }
 
-  // ✅ multiply by quantity
+  //  multiply by quantity
   min *= q;
   avg *= q;
 
@@ -664,11 +753,17 @@ else if(type==="Lighting"){
           // we honor the exact min/avg rates provided.
           pushRow("Paint", "-", area, RATES.Paint.unit, min*area, avg*area, qty);
         }
+
         else if(type==="Mirrors"){
           const area = Math.max(0, length*heightNum) * Math.max(1, qty);
           const {min,avg} = RATES.Mirrors.rate;
           pushRow("Mirrors", "-", area, RATES.Mirrors.unit, min*area, avg*area, qty);
         }
+else if(type==="Tiles"){
+  const area = Math.max(0, length * heightNum) * Math.max(1, qty);
+  const {min, avg} = RATES.Tiles.rate;
+  pushRow("Tiles", "-", area, RATES.Tiles.unit, min * area, avg * area, qty);
+}
       }
 
       tbody.innerHTML="";
@@ -722,6 +817,8 @@ else if(type==="Lighting"){
     document.getElementById("addItem").addEventListener("click", addItem);
     document.getElementById("calcAll").addEventListener("click", calcAll);
     addItem();
+})();
   </script>
+
 </body>
 </html>
